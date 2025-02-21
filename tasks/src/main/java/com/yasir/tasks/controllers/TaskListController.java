@@ -60,6 +60,6 @@ public class TaskListController {
     public String DeleteTaskList(@PathVariable("task_list_id") UUID taskListId){
         taskListService.deleteTaskList(taskListId);
         return "deleted successfully!";
-
     }
+
 }

@@ -1,6 +1,9 @@
 package com.yasir.tasks.services.impl;
 
+import com.yasir.tasks.domain.entities.Task;
 import com.yasir.tasks.domain.entities.TaskList;
+import com.yasir.tasks.domain.entities.TaskPriority;
+import com.yasir.tasks.domain.entities.TaskStatus;
 import com.yasir.tasks.repositories.TaskListRepository;
 import com.yasir.tasks.services.TaskListService;
 import org.springframework.stereotype.Service;
@@ -15,7 +18,7 @@ import java.util.UUID;
 public class TaskListServiceImpl implements TaskListService {
 
 
-    private  final TaskListRepository taskListRepository;
+    private final TaskListRepository taskListRepository;
 
     public TaskListServiceImpl(TaskListRepository taskListRepository) {
         this.taskListRepository = taskListRepository;
@@ -28,39 +31,30 @@ public class TaskListServiceImpl implements TaskListService {
 
     @Override
     public TaskList createTaskList(TaskList taskList) {
-        if(null != taskList.getId()){
+        if (null != taskList.getId()) {
             throw new IllegalArgumentException("Task list  already  has an ID!");
         }
-        if(null == taskList.getTitle() ||taskList.getTitle().isBlank()){
-            throw  new IllegalArgumentException("Task list title must be Present!");
+        if (null == taskList.getTitle() || taskList.getTitle().isBlank()) {
+            throw new IllegalArgumentException("Task list title must be Present!");
         }
-        LocalDateTime now  = LocalDateTime.now();
-        return taskListRepository.save(new TaskList(
-                null,
-                taskList.getTitle(),
-                taskList.getDescription(),
-                null,
-                now,
-                now
-        ));
+        LocalDateTime now = LocalDateTime.now();
+        return taskListRepository.save(new TaskList(null, taskList.getTitle(), taskList.getDescription(), null, now, now));
     }
 
     @Override
     public Optional<TaskList> getTaskList(UUID id) {
-         return taskListRepository.findById(id);
+        return taskListRepository.findById(id);
     }
 
     @Override
     public TaskList updateTaskList(UUID taskListId, TaskList taskList) {
-        if(null ==taskList.getId()){
+        if (null == taskList.getId()) {
             throw new IllegalArgumentException("Task list must have an ID");
         }
-        if(!Objects.equals(taskList.getId(),taskListId)){
+        if (!Objects.equals(taskList.getId(), taskListId)) {
             throw new IllegalArgumentException("Attempting to change task list OD, this is not permitted!");
         }
-        TaskList existingTaskList = taskListRepository.findById(taskListId).orElseThrow(()->
-                new IllegalArgumentException("Task list Not Found!")
-        );
+        TaskList existingTaskList = taskListRepository.findById(taskListId).orElseThrow(() -> new IllegalArgumentException("Task list Not Found!"));
 
         existingTaskList.setTitle(taskList.getTitle());
         existingTaskList.setDescription(taskList.getDescription());
@@ -74,4 +68,6 @@ public class TaskListServiceImpl implements TaskListService {
     public void deleteTaskList(UUID taskListId) {
         taskListRepository.deleteById(taskListId);
     }
+
+
 }
